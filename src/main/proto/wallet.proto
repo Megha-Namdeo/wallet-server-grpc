@@ -7,6 +7,10 @@ service WalletService {
 
   		rpc balance(WalletRequest) returns (WalletResponse) {}
   		
+  		rpc withdraw(WalletRequest) returns (WalletResponse) {}
+  		
+  		rpc deposit(WalletRequest) returns (WalletResponse) {}
+  		
 }
 
 message WalletRequest {
