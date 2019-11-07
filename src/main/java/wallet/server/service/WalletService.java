@@ -1,8 +1,6 @@
 package wallet.server.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -16,7 +14,6 @@ import com.server.grpc.WalletServiceGrpc.WalletServiceImplBase;
 import io.grpc.stub.StreamObserver;
 import wallet.server.dao.WalletRepository;
 import wallet.server.entity.Currency;
-import wallet.server.entity.Users;
 import wallet.server.entity.Wallets;
 import wallet.server.exception.AppInvalidArgumentException;
 

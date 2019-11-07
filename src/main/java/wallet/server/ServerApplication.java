@@ -12,14 +12,6 @@ public class ServerApplication {
 
 		SpringApplication.run(ServerApplication.class, args);
 
-//		Server server = ServerBuilder.forPort(9090).addService(new WalletService()).build();
-//
-//		server.start();
-//
-//		System.out.print("Server has been started at " + server.getPort());
-//
-//		server.awaitTermination();
-
 	}
 
 }
