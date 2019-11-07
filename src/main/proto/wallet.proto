@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_package = "com.server.grpc";
+
+
+service WalletService {
+
+  		rpc balance(WalletRequest) returns (WalletResponse) {}
+  		
+}
+
+message WalletRequest {
+
+  		int64 userID = 1;
+  		string amount = 2;
+  		string currency = 3;
+  
+}
+
+message WalletResponse {
+
+ 		string responsemessage = 1;
+		int32 responsecode = 2;
+}
+
+
