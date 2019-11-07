@@ -1,6 +1,8 @@
 package wallet.server.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -14,7 +16,8 @@ import com.server.grpc.WalletServiceGrpc.WalletServiceImplBase;
 import io.grpc.stub.StreamObserver;
 import wallet.server.dao.WalletRepository;
 import wallet.server.entity.Currency;
-import wallet.server.entity.Wallet;
+import wallet.server.entity.Users;
+import wallet.server.entity.Wallets;
 import wallet.server.exception.AppInvalidArgumentException;
 
 @Service
@@ -29,7 +32,7 @@ public class WalletService extends WalletServiceImplBase {
 
 		try {
 
-			Wallet userWallet = validateUser(request);
+			Wallets userWallet = validateUser(request);
 
 			String balance = userWallet.getBalance().toPlainString();
 
@@ -49,7 +52,7 @@ public class WalletService extends WalletServiceImplBase {
 	public void withdraw(WalletRequest request, StreamObserver<WalletResponse> responseObserver) {
 
 		try {
-			Wallet userWallet = validateUser(request);
+			Wallets userWallet = validateUser(request);
 
 			validateCurrency(request);
 
@@ -77,10 +80,10 @@ public class WalletService extends WalletServiceImplBase {
 
 		try {
 
-			Wallet userWallet = validateUser(request);
+			Wallets userWallet = validateUser(request);
 
 			validateCurrency(request);
-			
+
 			BigDecimal depositAmount = new BigDecimal(request.getAmount());
 
 			BigDecimal newAmount = userWallet.getBalance().add(depositAmount);
@@ -144,13 +147,25 @@ public class WalletService extends WalletServiceImplBase {
 		}
 	}
 
-	private Wallet validateUser(WalletRequest request) throws AppInvalidArgumentException {
+	private Wallets validateUser(WalletRequest request) throws AppInvalidArgumentException {
 
-		Wallet wallet = walletRepository.findById(request.getUserID()).orElse(null);
+		Wallets wallet = null;
+
+		try {
+
+			Currency currency = Currency.valueOf(request.getCurrency().toUpperCase());
+
+			wallet = walletRepository.getUserWalletsByCurrencyAndUserID(request.getUserID(), currency);
+
+		} catch (IllegalArgumentException e) {
+
+			throw new AppInvalidArgumentException("Currency should be in 'USD/EUR/GBP' ");
+
+		}
 
 		if (wallet == null) {
 
-			new AppInvalidArgumentException("User Doesnot exist");
+			throw new AppInvalidArgumentException("User Doesnot exist");
 
 		}
 
