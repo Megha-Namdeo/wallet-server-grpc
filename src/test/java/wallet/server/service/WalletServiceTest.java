@@ -163,6 +163,31 @@ public class WalletServiceTest {
 	}
 	
 	@Test
+	public void whenBalanceIsPositiveAndAmountIsEmpty_itShouldThrowException() {
+
+		WalletRequest request = WalletRequest.newBuilder().setAmount("").setCurrency("USD").setUserID(1L).build();
+
+		Wallets wallet = new Wallets();
+		wallet.setBalance(new BigDecimal(200));
+
+		Users user = new Users();
+		user.setCurrency(Currency.valueOf("USD"));
+		user.setUserId(1L);
+
+		wallet.setUser(user);
+
+		StreamObserver<WalletResponse> responseObserver = (StreamObserver<WalletResponse>) mock(StreamObserver.class);
+
+		Mockito.when(walletRepository.getUserWalletsByCurrencyAndUserID(1L, Currency.valueOf("USD")))
+				.thenReturn(wallet);
+
+		walletService.withdraw(request, responseObserver);
+
+		verify(responseObserver, times(1)).onError(any(Throwable.class));
+
+	}
+	
+	@Test
 	public void whenBalanceIsZero_itShouldThrowException() {
 
 		WalletRequest request = WalletRequest.newBuilder().setAmount("50").setCurrency("USD").setUserID(1L).build();
@@ -182,6 +207,57 @@ public class WalletServiceTest {
 				.thenReturn(wallet);
 
 		walletService.withdraw(request, responseObserver);
+
+		verify(responseObserver, times(1)).onError(any(Throwable.class));
+
+	}
+	
+	@Test
+	public void whenCurrencyIsValid_itShouldDepositwAmountGiven() {
+
+		WalletRequest request = WalletRequest.newBuilder().setAmount("50").setCurrency("USD").setUserID(1L).build();
+
+		Wallets wallet = new Wallets();
+		wallet.setBalance(new BigDecimal(200));
+
+		Users user = new Users();
+		user.setCurrency(Currency.valueOf("USD"));
+		user.setUserId(1L);
+
+		wallet.setUser(user);
+
+		StreamObserver<WalletResponse> responseObserver = (StreamObserver<WalletResponse>) mock(StreamObserver.class);
+
+		Mockito.when(walletRepository.getUserWalletsByCurrencyAndUserID(1L, Currency.valueOf("USD")))
+				.thenReturn(wallet);
+
+		walletService.deposit(request, responseObserver);
+
+		verify(responseObserver, times(1)).onNext(any(WalletResponse.class));
+
+	}
+	
+	@Test
+	public void whenCurrencyIsInvalid_itShouldThrowException() {
+
+		WalletRequest request = WalletRequest.newBuilder().setAmount("50").setCurrency("SAR").setUserID(1L).build();
+
+		StreamObserver<WalletResponse> responseObserver = (StreamObserver<WalletResponse>) mock(StreamObserver.class);
+
+		walletService.deposit(request, responseObserver);
+
+		verify(responseObserver, times(1)).onError(any(Throwable.class));
+
+	}
+	
+	@Test
+	public void whenCurrencyIsEmpty_itShouldThrowException() {
+
+		WalletRequest request = WalletRequest.newBuilder().setAmount("").setCurrency("SAR").setUserID(1L).build();
+
+		StreamObserver<WalletResponse> responseObserver = (StreamObserver<WalletResponse>) mock(StreamObserver.class);
+
+		walletService.deposit(request, responseObserver);
 
 		verify(responseObserver, times(1)).onError(any(Throwable.class));
 

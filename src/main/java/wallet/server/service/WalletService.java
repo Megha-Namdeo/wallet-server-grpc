@@ -51,8 +51,6 @@ public class WalletService extends WalletServiceImplBase {
 		try {
 			Wallets userWallet = validateUser(request);
 
-			validateCurrency(request);
-
 			BigDecimal withdrawAmount = validateAmount(request, userWallet.getBalance());
 
 			BigDecimal newAmount = userWallet.getBalance().subtract(withdrawAmount);
@@ -78,8 +76,6 @@ public class WalletService extends WalletServiceImplBase {
 		try {
 
 			Wallets userWallet = validateUser(request);
-
-			validateCurrency(request);
 
 			BigDecimal depositAmount = new BigDecimal(request.getAmount());
 
@@ -125,28 +121,15 @@ public class WalletService extends WalletServiceImplBase {
 
 	}
 
-	private void validateCurrency(WalletRequest request) throws AppInvalidArgumentException {
+	private Wallets validateUser(WalletRequest request) throws AppInvalidArgumentException {
+
+		Wallets wallet = null;
 
 		if (request.getCurrency().isEmpty()) {
 
 			throw new AppInvalidArgumentException("Currency should be provided for the operation ");
 
 		}
-
-		try {
-
-			Currency.valueOf(request.getCurrency().toUpperCase());
-
-		} catch (IllegalArgumentException e) {
-
-			throw new AppInvalidArgumentException("Currency should be in 'USD/EUR/GBP' ");
-
-		}
-	}
-
-	private Wallets validateUser(WalletRequest request) throws AppInvalidArgumentException {
-
-		Wallets wallet = null;
 
 		try {
 
