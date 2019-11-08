@@ -38,7 +38,7 @@ public class WalletServiceTest {
 	static class WalletServiceTestContextConfiguration {
 
 		@Bean
-		public WalletService passportService() {
+		public WalletService walletService() {
 
 			return new WalletService();
 
